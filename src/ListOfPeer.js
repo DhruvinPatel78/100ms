@@ -9,7 +9,6 @@ import {
   selectIsPeerAudioEnabled,
   selectIsPeerVideoEnabled,
   useHMSActions,
-  useHMSNotifications,
   useHMSStore,
 } from "@100mslive/hms-video-react";
 
@@ -17,16 +16,9 @@ const ListOfPeer = ({ user, localPeer }) => {
   const hmsActions = useHMSActions();
   const audioOn = useHMSStore(selectIsPeerAudioEnabled(user.id));
   const videoOn = useHMSStore(selectIsPeerVideoEnabled(user.id));
-  const notification = useHMSNotifications();
-  console.log("notification list - - - ->", notification);
-  console.log("audioOn 12  - - - - >", audioOn);
-  console.log("videoOn 12  - - - - >", videoOn);
   const Audio = async (peer) => {
-    const { enabled } = notification.data;
-    console.log("enabled - - -  - ->", enabled);
     try {
       await hmsActions.setRemoteTrackEnabled(peer.audioTrack, !audioOn);
-      // await hmsActions.setEnabledTrack(peer.audioTrack, !audioOn);
     } catch (error) {
       console.error(error);
     }

@@ -1,28 +1,18 @@
 import React, { useRef, useEffect } from "react";
 import {
-  HMSNotificationTypes,
-  selectAudioTrackByPeerID,
   selectCameraStreamByPeerID,
-  selectIsPeerAudioEnabled,
   selectIsPeerVideoEnabled,
   useHMSActions,
-  useHMSNotifications,
   useHMSStore,
 } from "@100mslive/hms-video-react";
 import user from "./user.svg";
-const VideoTile = ({ peer, isLocal, isLocalScreenShared }) => {
+const VideoTile = ({ peer }) => {
   const videoRef = useRef(null);
   const hmsActions = useHMSActions();
   const videoTrack = useHMSStore(selectCameraStreamByPeerID(peer.id));
-  const audioTrack = useHMSStore(selectAudioTrackByPeerID(peer.id));
   const videoOn = useHMSStore(selectIsPeerVideoEnabled(peer.id));
-  const notification = useHMSNotifications();
-  console.log("notification - - - ->", notification);
-  console.log("audioTrack - - - ->", audioTrack);
-  console.log("videoRef - - - >", videoRef.current);
   useEffect(() => {
     (async () => {
-      console.log("videoTrack from videoTile - - - ", videoTrack);
       if (videoRef.current && videoTrack) {
         if (videoTrack.enabled) {
           await hmsActions.attachVideo(videoTrack.id, videoRef.current);

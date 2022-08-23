@@ -9,7 +9,6 @@ import {
   HMSNotificationTypes,
   selectPeerScreenSharing,
   selectHMSMessages,
-  selectLocalPeerRole,
 } from "@100mslive/hms-video-react";
 import VideoTile from "./VideoTile";
 import ControlBar from "./ControlBar";
@@ -19,7 +18,6 @@ import Chat from "./Chat";
 const Room = () => {
   const localPeer = useHMSStore(selectLocalPeer);
   const peers = useHMSStore(selectPeers);
-  const roles = useHMSStore(selectLocalPeerRole);
   const hmsActions = useHMSActions();
   const isLocalScreenShared = useHMSStore(selectIsSomeoneScreenSharing);
   const whoIsScreenSharing = useHMSStore(selectPeerScreenSharing);
@@ -33,40 +31,51 @@ const Room = () => {
     if (!notification) {
       return;
     }
-    switch (notification.type) {
-      case HMSNotificationTypes.PEER_JOINED:
-        console.log(`${notification.data.name} joined`);
-        break;
-      case HMSNotificationTypes.PEER_LEFT:
-        console.log(`${notification.data.name} left`);
-        break;
-      case HMSNotificationTypes.NEW_MESSAGE:
-        break;
-      case HMSNotificationTypes.ERROR:
-        console.log("[Error]", notification.data);
-        // console.log('[Error Code]', notfication.data.code);
-        break;
-      case HMSNotificationTypes.TRACK_DEGRADED:
-        break;
-      case HMSNotificationTypes.TRACK_RESTORED:
-        break;
-      case HMSNotificationTypes.ROOM_ENDED:
-        break;
-      case HMSNotificationTypes.REMOVED_FROM_ROOM:
-        break;
-      case HMSNotificationTypes.DEVICE_CHANGE_UPDATE:
-        break;
-      case HMSNotificationTypes.CHANGE_TRACK_STATE_REQUEST:
-        break;
-      default:
-        break;
-    }
+    const notificationHandler = async () => {
+      switch (notification.type) {
+        case HMSNotificationTypes.PEER_JOINED:
+          console.log(`${notification.data.name} joined`);
+          break;
+        case HMSNotificationTypes.PEER_LEFT:
+          console.log(`${notification.data.name} left`);
+          break;
+        case HMSNotificationTypes.NEW_MESSAGE:
+          break;
+        case HMSNotificationTypes.ERROR:
+          console.log("[Error]", notification.data);
+          break;
+        case HMSNotificationTypes.TRACK_DEGRADED:
+          break;
+        case HMSNotificationTypes.TRACK_RESTORED:
+          break;
+        case HMSNotificationTypes.ROOM_ENDED:
+          break;
+        case HMSNotificationTypes.REMOVED_FROM_ROOM:
+          break;
+        case HMSNotificationTypes.DEVICE_CHANGE_UPDATE:
+          break;
+        case HMSNotificationTypes.CHANGE_TRACK_STATE_REQUEST:
+          const { track, enabled } = notification?.data;
+          // Unmute Request
+          if (enabled) {
+            // Ask for consent using dialog or any other appropriate UI
+            if (alert("host request to unmute")) {
+              // They clicked Yes
+            } else {
+              await hmsActions.setEnabledTrack(track?.id, enabled);
+              // They clicked no
+            }
+          } else {
+            // Mute Request
+            // Show toast to user
+          }
+          break;
+        default:
+          break;
+      }
+    };
+    notificationHandler();
   }, [notification]);
-  console.log("roles - - >", roles);
-  console.log("tabs - - >", tab);
-  console.log("Peers - - >", peers);
-  console.log("Peers  - - > Local", localPeer);
-  console.log("Peers  - - > Sharing", whoIsScreenSharing);
   return (
     <div style={{ display: "flex", width: "100%", height: "100vh" }}>
       <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
@@ -109,11 +118,7 @@ const Room = () => {
               .map((peer, i) => {
                 return (
                   <div key={i}>
-                    <VideoTile
-                      isLocal={false}
-                      peer={peer}
-                      isLocalScreenShared={isLocalScreenShared}
-                    />
+                    <VideoTile isLocal={false} peer={peer} />
                   </div>
                 );
               })}
@@ -121,9 +126,7 @@ const Room = () => {
         <ControlBar
           toggleScreen={toggleScreen}
           isLocalScreenShared={isLocalScreenShared}
-          peers={peers}
           localPeer={localPeer}
-          allMessages={allMessages}
         />
       </div>
       <div style={{ width: "350px" }}>
@@ -176,7 +179,6 @@ const Room = () => {
             peers
               .filter((item) => item.id !== localPeer.id)
               .map((user) => {
-                console.log("user  - - -->", user);
                 return (
                   <div key={user.id}>
                     <ListOfPeer user={user} localPeer={localPeer} />
@@ -184,7 +186,7 @@ const Room = () => {
                 );
               })
           ) : (
-            <Chat peer={localPeer} allMessages={allMessages} />
+            <Chat allMessages={allMessages} />
           )}
         </div>
       </div>

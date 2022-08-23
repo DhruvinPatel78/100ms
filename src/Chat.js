@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { Button, useHMSActions } from "@100mslive/hms-video-react";
 import { IoSend } from "react-icons/io5";
-const Chat = ({ peer, allMessages }) => {
+const Chat = ({ allMessages }) => {
   const [message, setMessage] = useState("");
-  console.log("peer - - - - >", peer);
-  console.log("allMessages - - - - >", allMessages);
   const hmsActions = useHMSActions();
   const chatHandler = (msg) => {
     hmsActions.sendBroadcastMessage(msg);

@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
-  HMSNotificationTypes,
   selectIsConnectedToRoom,
   selectIsLocalAudioEnabled,
   selectIsLocalVideoEnabled,
   selectPermissions,
   useHMSActions,
-  useHMSNotifications,
   useHMSStore,
 } from "@100mslive/hms-video-react";
 import {
@@ -26,8 +24,6 @@ const ControlBar = ({ toggleScreen, isLocalScreenShared, localPeer }) => {
   const isLocalVideoEnabled = useHMSStore(selectIsLocalVideoEnabled);
   const isConnected = useHMSStore(selectIsConnectedToRoom);
   const permissions = useHMSStore(selectPermissions);
-  const notification = useHMSNotifications();
-  console.log("permissions  - - -  - ->", permissions);
   const toggleVideo = async () => {
     await hmsActions.setLocalVideoEnabled(!isLocalVideoEnabled);
   };

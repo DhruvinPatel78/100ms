@@ -30,8 +30,6 @@ const App = () => {
     const token = await getToken(userName, role);
     hmsActions.join({ authToken: token, userName });
   };
-  console.log("hmsActions - - - >", hmsActions);
-  console.log("hmsActions hmsSDKPeers - - - >", hmsActions?.hmsSDKPeers?.role);
   return (
     <div
       style={{
