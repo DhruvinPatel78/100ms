@@ -5,6 +5,7 @@ import {
   BsFillMicFill,
   BsFillMicMuteFill,
 } from "react-icons/bs";
+import { FaUserTimes } from "react-icons/fa";
 import {
   selectIsPeerAudioEnabled,
   selectIsPeerVideoEnabled,
@@ -27,6 +28,15 @@ const ListOfPeer = ({ user, localPeer }) => {
     try {
       await hmsActions.setRemoteTrackEnabled(peer.videoTrack, !videoOn);
     } catch (error) {
+      console.error(error);
+    }
+  };
+  const removeUser = async (peer) => {
+    try {
+      const reason = "Good Bye";
+      await hmsActions.removePeer(peer.id, reason);
+    } catch (error) {
+      // Permission denied or invalid peer ID or not connected to room
       console.error(error);
     }
   };
@@ -95,6 +105,14 @@ const ListOfPeer = ({ user, localPeer }) => {
               onClick={() => video(user)}
             />
           )}
+          <FaUserTimes
+            style={{
+              width: 20,
+              height: "auto",
+              cursor: "pointer",
+            }}
+            onClick={() => removeUser(user)}
+          />
         </div>
       )}
     </div>
